@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+  </head>
+  <body>
+      <p></p>
+      <button onclick="mystring">edit</button>
+      <button onclick="mystring">close</button>
+    <label id="mystring"></label>
+    
+        
+        
+    </div>
+    <script>
+        function myFunction(){
+          
+
+        }
+        // window.onmouseclick = myFunction;
+        // function myFunction() {
+        //     document.getElementById("mystring") = "hello world";
+        // }
+        // let label= document.createElement('label2')
+        // label2.innerHTML = ""
+        // document.getElementById('edit').appendChild(label2)
+        // document.getElementById('edit').addEventListener('mousemove' , (e))
+      var MouseX, MouseY;
+    //   document.createElement("button");
+    //   document.createTextNode("edit");
+    //   label2.appendChild(edit);
+    //   document.body.appendChild(edit)
+      document.addEventListener('click', function(e){
+        //   let pos = "(${e.clientX}, ${e.clientY})"
+        //   mystring.innertext = pos;
+          let change = getXYPosition()
+          document.body.append(change);
+        
+        //   document.getElementById("mystring").innerHTML = "hello world";
+      })
+
+      function getXYPosition(e) {
+        MouseX = (e || event).clientX;
+        MouseY = (e || event).clientY;
+        console.log(MouseX, MouseY);
+        const str = document.createElement("label");
+        const edit_button = document.getElementById("label2");
+        str.style.color = "black";
+        str.style.position = "absolute";
+        str.style.left = MouseX + "px";
+        str.style.top = MouseY + "px";
+        str.innerHTML="hello world";
+        
+        return str;
+        // let pos = `mystring`
+        // mystring.innertext = pos;
+      }
+    //   document.onmousemove = getXYPosition;
+      
+    </script>
+  </body>
+</html>
