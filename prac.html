@@ -1,62 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    
-  </head>
-  <body>
-      <p></p>
-      <button onclick="mystring">edit</button>
-      <button onclick="mystring">close</button>
-    <label id="mystring"></label>
-    
-        
-        
-    </div>
-    <script>
-        function myFunction(){
-          
+<html>
 
+<head>
+    <title>document</title>
+</head>
+
+<body>
+    <div id="divID"></div>
+    <style>
+        body,
+        #divID {
+            height: 500px;
+            width: 100%;
         }
-        // window.onmouseclick = myFunction;
-        // function myFunction() {
-        //     document.getElementById("mystring") = "hello world";
-        // }
-        // let label= document.createElement('label2')
-        // label2.innerHTML = ""
-        // document.getElementById('edit').appendChild(label2)
-        // document.getElementById('edit').addEventListener('mousemove' , (e))
-      var MouseX, MouseY;
-    //   document.createElement("button");
-    //   document.createTextNode("edit");
-    //   label2.appendChild(edit);
-    //   document.body.appendChild(edit)
-      document.addEventListener('click', function(e){
-        //   let pos = "(${e.clientX}, ${e.clientY})"
-        //   mystring.innertext = pos;
-          let change = getXYPosition()
-          document.body.append(change);
-        
-        //   document.getElementById("mystring").innerHTML = "hello world";
-      })
+    </style>
+    <script>
+        let clicks = [];
 
-      function getXYPosition(e) {
-        MouseX = (e || event).clientX;
-        MouseY = (e || event).clientY;
-        console.log(MouseX, MouseY);
-        const str = document.createElement("label");
-        const edit_button = document.getElementById("label2");
-        str.style.color = "black";
-        str.style.position = "absolute";
-        str.style.left = MouseX + "px";
-        str.style.top = MouseY + "px";
-        str.innerHTML="hello world";
-        
-        return str;
-        // let pos = `mystring`
-        // mystring.innertext = pos;
-      }
-    //   document.onmousemove = getXYPosition;
-      
+        let label = document.createElement("label");
+        label.innerText = "";
+        document.getElementById("divID").appendChild(label);
+        document.getElementById("divID").addEventListener("mousemove", (e) => {
+            let pos = `(${e.clientX}, ${e.clientY})`;
+            label.innerText = pos;
+            label.style.position = "absolute";
+            label.style.top = e.clientY + "px";
+            label.style.left = e.clientX + 10 + "px";
+        });
+
+        document.getElementById("divID").addEventListener("mouseup", (e) => {
+            e.preventDefault();
+             if (!(e.target && e.target.id == "divID")) return;
+            let div = document.createElement("div");
+            let divId = Date.now();
+
+            console.log(div);
+            div.setAttribute("id", `div${divId}`);
+            div.style.position = "absolute";
+            div.style.top = e.clientY + "px";
+            div.style.left = e.clientX + "px";
+
+            document.getElementById("divID").appendChild(div);
+            let hello = document.createElement("label");
+            hello.innerText = `hello`;
+            hello.setAttribute("id", `label${divId}`);
+            document.getElementById(`div${divId}`).appendChild(hello);
+
+            let edit = document.createElement("button");
+            edit.setAttribute("id", `edit${divId}`);
+            edit.setAttribute(
+                "onclick",
+                `editFun(${divId},label${divId},edit${divId},close${divId},save${divId},cancel${divId},input${divId})`
+            );
+            edit.innerHTML = "edit";
+            document.getElementById(`div${divId}`).appendChild(edit);
+
+            //creating close button
+            let close = document.createElement("button");
+            close.innerHTML = "close";
+            close.setAttribute("id", `close${divId}`);
+            close.innerText = `close`;
+            close.setAttribute("onclick", `closeFun(div${divId})`);
+            document.getElementById(`div${divId}`).appendChild(close);
+
+            let save = document.createElement("button");
+            save.innerHTML = "save";
+            save.setAttribute("id", `save${divId}`);
+            document.getElementById(`div${divId}`).appendChild(save);
+            save.style.display = "none";
+
+            let cancel = document.createElement("button");
+            cancel.innerHTML = "cancel";
+            cancel.setAttribute("id", `cancel${divId}`);
+            cancelId = `cancel${divId}`;
+            document.getElementById(`div${divId}`).appendChild(cancel);
+            cancel.style.display = "none";
+
+            let input = document.createElement("input");
+            input.setAttribute("type", "text");
+            input.setAttribute("id", `input${divId}`);
+            document.getElementById(`div${divId}`).appendChild(input);
+            input.style.display = "none";
+
+            clicks.push({
+                text: "hello",
+                x: e.clientX,
+                y: e.clientY,
+                id: `div${divId}`,
+            });
+
+            console.log(clicks);
+        });
+
+        function editFun(id, labelEle, editEle, closeEle, saveEle, cancelEle, input) {
+            editEle.style.display = "none";
+            labelEle.style.display = "none";
+            cancelEle.style.display = "block";
+            saveEle.style.display = "block";
+            input.style.display = "block";
+            let value = labelEle.innerText;
+            input.value = value;
+            saveEle.setAttribute("onclick", `saveFun(${id})`);
+            cancelEle.setAttribute("onclick", `cancel(${id})`);
+        }
+
+        function saveFun(id) {
+            console.log(id);
+            let input = document.getElementById(`input${id}`);
+            let label = document.getElementById(`label${id}`);
+            let edit = document.getElementById(`edit${id}`);
+            let cancel = document.getElementById(`cancel${id}`);
+            let save = document.getElementById(`save${id}`);
+            label.innerText = input.value;
+            edit.style.display = "block";
+            label.style.display = "block";
+            cancel.style.display = "none";
+            save.style.display = "none";
+            input.style.display = "none";
+        }
+
+        function cancel(id) {
+            let input = document.getElementById(`input${id}`);
+            let label = document.getElementById(`label${id}`);
+            let edit = document.getElementById(`edit${id}`);
+            let cancel = document.getElementById(`cancel${id}`);
+            let save = document.getElementById(`save${id}`);
+            save.style.display = "none";
+            cancel.style.display = "none";
+            input.style.display = "none";
+            input.value = "";
+            edit.style.display = "block";
+            label.style.display = "block";
+        }
+
+        function closeFun(Id) {
+            var c = Id;
+            let index = clicks.findIndex(({ id }) => c === id);
+            clicks.splice(index, 1);
+            Id.remove();
+            console.log(clicks);
+        }
     </script>
-  </body>
+</body>
+
 </html>
