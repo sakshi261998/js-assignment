@@ -6,7 +6,14 @@
 </head>
 
 <body>
-    <div id="divID"></div>
+    <div id="divID">
+        <p id="pid" > </p>
+
+    <!-- <input type="text" placeholder="name" id="name">
+    <input type="text" placeholder="age" id="age"> -->
+    <!-- <button onclick="save()" id= "btn"></button> -->
+    </div>
+
     <style>
         body,
         #divID {
@@ -14,9 +21,28 @@
             width: 100%;
         }
     </style>
-    <script>
-        let clicks = [];
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase.js"></script>
 
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <script>
+
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyAKweT5UNKkXB2HMFnX38JnQH4z2CDmHLo",
+            authDomain: "example-6a4fd.firebaseapp.com",
+            databaseURL: "https://example-6a4fd-default-rtdb.firebaseio.com",
+            projectId: "example-6a4fd",
+            storageBucket: "example-6a4fd.appspot.com",
+            messagingSenderId: "242387464771",
+            appId: "1:242387464771:web:d2bda83065d45c7ccf5af6"
+        };
+                 firebase.initializeApp(firebaseConfig);
+
+        let clicks = [];
         let label = document.createElement("label");
         label.innerText = "";
         document.getElementById("divID").appendChild(label);
@@ -26,11 +52,14 @@
             label.style.position = "absolute";
             label.style.top = e.clientY + "px";
             label.style.left = e.clientX + 10 + "px";
-        });
+
+
+          
+         });
 
         document.getElementById("divID").addEventListener("mouseup", (e) => {
             e.preventDefault();
-             if (!(e.target && e.target.id == "divID")) return;
+            if (!(e.target && e.target.id == "divID")) return;
             let div = document.createElement("div");
             let divId = Date.now();
 
@@ -40,11 +69,33 @@
             div.style.top = e.clientY + "px";
             div.style.left = e.clientX + "px";
 
+            // div.style.width = 100%
+
+
+
             document.getElementById("divID").appendChild(div);
             let hello = document.createElement("label");
-            hello.innerText = `hello`;
-            hello.setAttribute("id", `label${divId}`);
+             hello.innerText = `hello`;
+             hello.setAttribute("id", `label${divId}`);
             document.getElementById(`div${divId}`).appendChild(hello);
+
+           
+            // let input = document.createElement("input");
+            // input.setAttribute("type", "text");
+            // input.setAttribute("placeholder", "name");
+            // input.setAttribute("id", `input1${divId}`);
+            // document.getElementById(`div${divId}`).appendChild(input);
+            // // input.style.display = "none";
+           
+           
+            // let input1 = document.createElement("input");
+            // input1.setAttribute("placeholder", "age");
+            // input1.setAttribute("type", "text");
+            // input1.setAttribute("id", `input2${divId}`);
+            // document.getElementById(`div${divId}`).appendChild(input1);
+
+
+           
 
             let edit = document.createElement("button");
             edit.setAttribute("id", `edit${divId}`);
@@ -54,6 +105,7 @@
             );
             edit.innerHTML = "edit";
             document.getElementById(`div${divId}`).appendChild(edit);
+
 
             //creating close button
             let close = document.createElement("button");
@@ -67,7 +119,7 @@
             save.innerHTML = "save";
             save.setAttribute("id", `save${divId}`);
             document.getElementById(`div${divId}`).appendChild(save);
-            save.style.display = "none";
+            // save.style.display = "none";
 
             let cancel = document.createElement("button");
             cancel.innerHTML = "cancel";
@@ -82,32 +134,45 @@
             document.getElementById(`div${divId}`).appendChild(input);
             input.style.display = "none";
 
+             
             clicks.push({
+
                 text: "hello",
                 x: e.clientX,
                 y: e.clientY,
                 id: `div${divId}`,
             });
+            firebase.firestore().collection("inputdata").doc(`${divId}`).set({
+                data: `${hello.innerText}`,
+                x: e.clientX,
+                y: e.clientY
+            })
 
+            // getdata(divId);
             console.log(clicks);
+
         });
+
+
 
         function editFun(id, labelEle, editEle, closeEle, saveEle, cancelEle, input) {
             editEle.style.display = "none";
             labelEle.style.display = "none";
             cancelEle.style.display = "block";
             saveEle.style.display = "block";
-            input.style.display = "block";
-            let value = labelEle.innerText;
-            input.value = value;
+             input.style.display = "block";
+             let value = labelEle.innerText;
+             input.value = value;
             saveEle.setAttribute("onclick", `saveFun(${id})`);
             cancelEle.setAttribute("onclick", `cancel(${id})`);
+            
         }
 
         function saveFun(id) {
             console.log(id);
-            let input = document.getElementById(`input${id}`);
-            let label = document.getElementById(`label${id}`);
+            var str = document.getElementById("divID").value;
+           let input = document.getElementById(`input${id}`);
+             let label = document.getElementById(`label${id}`);
             let edit = document.getElementById(`edit${id}`);
             let cancel = document.getElementById(`cancel${id}`);
             let save = document.getElementById(`save${id}`);
@@ -117,6 +182,11 @@
             cancel.style.display = "none";
             save.style.display = "none";
             input.style.display = "none";
+            firebase.firestore().collection("inputdata").doc(`${id}`).update({
+                data: `${label.innerText}`
+
+            })
+            
         }
 
         function cancel(id) {
@@ -139,8 +209,52 @@
             clicks.splice(index, 1);
             Id.remove();
             console.log(clicks);
-        }
+            firebase.firestore().collection("inputdata").doc(`${Id}`).delete()
+                {
+                 data:`${label.innerText}`
+            }
+        }            
+           window.onload=function getdata(){   
+
+          var docRef =firebase.firestore().collection("inputdata");
+           docRef.get().then((querysnapshot) => {
+               querysnapshot.forEach(element => {
+                   console.log(element.data());
+                   document.getElementById("pid").innerHTML = element.data().data;
+     
+            let abc = document.createElement("div")
+            abc.style.position = "absolute";
+            
+            abc.style.top= element.data().y + "px";
+            abc.style.left= element.data().x + "px";
+            abc.innerText = element.data().data;
+            document.getElementById("divID").appendChild(abc);
+
+
+               });
+           })
+
+
+        //   docRef.get().then((doc) => {
+        //       if(doc.exists){
+        //           console.log("document data:",doc.data());
+        //       } else{
+        //           console.log("no data");
+        //       }
+        //   }).catch((error) =>  {
+        //       console.log("error",error);
+        //   });
+         }
+
+
+         
+            
+        
+
+       
+        
     </script>
-</body>
+
+   </body>
 
 </html>
